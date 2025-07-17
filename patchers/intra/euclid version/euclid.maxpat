@@ -40,6 +40,60 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"bgcolor" : [ 0.352941176470588, 0.352941176470588, 0.352941176470588, 1.0 ],
+					"fontname" : "Helvetica Neue UltraLight",
+					"id" : "obj-18",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 533.0, 415.0, 184.0, 20.0 ],
+					"saved_attribute_attributes" : 					{
+						"bgcolor" : 						{
+							"expression" : "themecolor.live_led_bg"
+						}
+,
+						"textcolor" : 						{
+							"expression" : "themecolor.live_display_handle_one"
+						}
+
+					}
+,
+					"text" : "Trigger",
+					"textcolor" : [ 1.0, 0.694117647058824, 0.0, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-11",
+					"maxclass" : "live.scope~",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 533.0, 352.0, 184.0, 68.0 ],
+					"range" : [ -0.1, 1.1 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-15",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 6,
+					"outlettype" : [ "signal", "signal", "signal", "signal", "signal", "" ],
+					"patching_rect" : [ 504.0, 304.0, 71.5, 22.0 ],
+					"saved_object_attributes" : 					{
+						"parameter_enable" : 0,
+						"parameter_mappable" : 0
+					}
+,
+					"text" : "rtt.loop~"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-6",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
@@ -133,7 +187,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 0.0, 640.0, 480.0 ],
+						"rect" : [ 84.0, 144.0, 640.0, 480.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -161,6 +215,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"assistshowspatchername" : 0,
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-83",
@@ -298,8 +353,28 @@
 								}
 
 							}
+, 							{
+								"box" : 								{
+									"attr" : "quantum",
+									"id" : "obj-1",
+									"maxclass" : "attrui",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 351.0, 169.0, 150.0, 22.0 ]
+								}
+
+							}
  ],
 						"lines" : [ 							{
+								"patchline" : 								{
+									"destination" : [ "obj-67", 0 ],
+									"source" : [ "obj-1", 0 ]
+								}
+
+							}
+, 							{
 								"patchline" : 								{
 									"destination" : [ "obj-93", 0 ],
 									"source" : [ "obj-67", 0 ]
@@ -1145,7 +1220,7 @@
 						}
 ,
 						"classnamespace" : "dsp.gen",
-						"rect" : [ 786.0, 129.0, 870.0, 794.0 ],
+						"rect" : [ 608.0, 129.0, 870.0, 794.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1209,7 +1284,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "// SETUP //\r\nParam pulses(3);   // Number of hits\nParam steps(8);    // Total steps (loop length)\nParam displacement(0); // Shift the unquantized function by a value between 0 and 1\r\n\nHistory prevInnerPhase(0);  // stores previous sample's innerphase value\r\nHistory prevPhase(0);   // stores previous sample's phase value\r\nHistory prevStep(0);\r\n\r\nphase = in2; // a time ramp driving calculations\r\ntrig = 0;\r\nready = 0;\r\n\r\n// FUN //\r\n\r\n// Calculate a function to draw - this is a rough bjorklunds\r\nf_x = floor(phase * steps + displacement);\r\n\r\n// Quantize and normalise f(x)\r\ninnerPhase = floor(f_x)/steps;\r\n\r\n\r\n/////\r\ncurrentStep = f_x;\n\n// Euclidean trigger condition\nready = floor((currentStep * pulses) / steps) > floor((prevStep * pulses) / steps);\nready = ready + (phase < prevPhase);\n// One-shot trigger at step boundaries\ntrig = (currentStep != prevStep) && ready;\r\n\n\n// CLEAN-UP //\r\n\n// Output trigger (1-sample pulse)\nout1 = trig;\n\n// Output quantised + normalised function for visualisation\r\nout2= innerPhase;\r\n\r\n// Output raw function for visualisation\r\nout3 = f_x;\n\r\n// Update history for next sample\nprevInnerPhase = innerPhase;\r\nprevPhase = phase;\r\nprevStep = currentStep;\n",
+									"code" : "// SETUP //\r\nParam pulses(3);   // Number of hits\nParam steps(8);    // Total steps (loop length)\nParam displacement(0); // Shift the unquantized function by a value between 0 and 1\r\n\nHistory prevInnerPhase(0);  // stores previous sample's innerphase value\r\nHistory prevPhase(0);   // stores previous sample's phase value\r\nHistory prevStep(0);\r\n\r\nphase = pow(in2,2); // a time ramp driving calculations\r\ntrig = 0;\r\nready = 0;\r\n\r\n// FUN //\r\n\r\n// Calculate a function to draw - this is a rough bjorklunds\r\nf_x = floor(phase * steps + displacement);\r\n\r\n// Quantize and normalise f(x)\r\ninnerPhase = floor(f_x)/steps;\r\n\r\n\r\n/////\r\ncurrentStep = f_x;\n\n// Euclidean trigger condition\nready = floor((currentStep * pulses) / steps) > floor((prevStep * pulses) / steps);\nready = ready + (phase < prevPhase);\n// One-shot trigger at step boundaries\ntrig = (currentStep != prevStep) && ready;\r\n\n\n// CLEAN-UP //\r\n\n// Output trigger (1-sample pulse)\nout1 = trig;\n\n// Output quantised + normalised function for visualisation\r\nout2= innerPhase;\r\n\r\n// Output raw function for visualisation\r\nout3 = f_x;\n\r\n// Update history for next sample\nprevInnerPhase = innerPhase;\r\nprevPhase = phase;\r\nprevStep = currentStep;\n",
 									"fontface" : 0,
 									"fontname" : "<Monospaced>",
 									"fontsize" : 12.0,
@@ -1457,6 +1532,22 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-11", 0 ],
+					"order" : 0,
+					"source" : [ "obj-15", 3 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-39", 0 ],
+					"order" : 1,
+					"source" : [ "obj-15", 3 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-6", 0 ],
 					"source" : [ "obj-16", 0 ]
 				}
@@ -1642,13 +1733,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-39", 0 ],
-					"source" : [ "obj-7", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-41", 0 ],
 					"source" : [ "obj-8", 0 ]
 				}
@@ -1691,7 +1775,16 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-15", 0 ],
+					"order" : 0,
+					"source" : [ "obj-98", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-7", 1 ],
+					"order" : 1,
 					"source" : [ "obj-98", 0 ]
 				}
 
@@ -1699,6 +1792,10 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "link.phasor~.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "rtt.loop~.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -1718,6 +1815,9 @@
 			}
 , 			{
 				"boxes" : [ "obj-17", "obj-19" ]
+			}
+, 			{
+				"boxes" : [ "obj-18", "obj-11" ]
 			}
  ]
 	}
